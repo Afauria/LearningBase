@@ -95,6 +95,13 @@
         color:'rgb(90,90,90)',
         language:'chinese'
       },
+      Valine: {
+        appId: '8Qjq2Vf2w7KNW5bzIqHqU6pN-9Nh9j0Va',
+        appKey: 'WenmbfoBFKOabxRfCbgv7KgE',
+        recordIP: true,
+        visitor: true,
+      },
+
       //------不常用配置------
       formatUpdated: '{YYYY}/{MM}/{DD} {HH}:{mm}', // 配置日期格式，文章中需要使用{docsify-updated}引用变量
       // auto2top: true, // 切换页面后是否自动回到顶部，如果目录已经展开：为true的时候，则收起并回到顶部，为false的时候，则只收起，不回到顶部。
@@ -103,7 +110,7 @@
       // mergeNavbar: true, // 小屏幕设备合并导航栏到侧边栏
       // externalLinkTarget: '_self', // 文章中外部链接跳转方式，默认为_blank，打开新标签页
 
-
+      
       // 自定义插件
       plugins: [
         function(hook, vm) {
@@ -160,31 +167,37 @@
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
 
-  <!-- GitTalk评论插件，需要创建OAuth App -->
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css">
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
-  <script>
-    const gitalk = new Gitalk({
-      clientID: 'Github Application Client ID',
-      clientSecret: 'Github Application Client Secret',
-      repo: 'LearningBase',
-      owner: 'Afauria',
-      admin: [''],
-      // facebook-like distraction free mode
-      distractionFreeMode: false
-    })
-  </script>
-
-  <!-- 页面内导航，右上角显示，样式和GitTalk冲突，因此不开启 -->
-  <!-- <link rel="stylesheet" href="https://unpkg.com/docsify-toc@1.0.0/dist/toc.css"> -->
-  <!-- <script src="https://unpkg.com/docsify-toc@1.0.0/dist/toc.js"></script> -->
-  
-  <!-- 词汇表插件，文章中可以使用词汇表中的词汇，用空格隔开，点击跳转到词汇说明 -->
-  <!-- <script src="//unpkg.com/docsify-glossary/dist/docsify-glossary.min.js"></script> -->
+  <!-- Valine评论插件 -->
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script src="//unpkg.com/docsify-valine/dist/docsify-valine.min.js"></script>
 
   <!-- 自定义 -->
   <!-- 统计站点访问量 -->
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  <!-- Optional -->
+  <!-- GitTalk评论插件，需要创建OAuth App，并且访问受限，因此不使用 -->
+  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css">
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+  <script>
+    const gitalk = new Gitalk({
+      clientID: 'cb4f79c2e0b26f3e5f71',
+      clientSecret: '5e219ea4159ed82b7725bc05bf8d494da79c9a9e',
+      repo: 'LearningBase',
+      owner: 'Afauria',
+      admin: ['Afauria'],
+      // facebook-like distraction free mode
+      distractionFreeMode: false
+    })
+  </script> -->
+
+  <!-- 页面内导航，右上角显示，样式和GitTalk、Valine有冲突，因此不使用 -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/docsify-toc@1.0.0/dist/toc.css"> -->
+  <!-- <script src="https://unpkg.com/docsify-toc@1.0.0/dist/toc.js"></script> -->
+
+  <!-- 词汇表插件，文章中可以使用词汇表中的词汇，用空格隔开，点击跳转到词汇说明 -->
+  <!-- <script src="//unpkg.com/docsify-glossary/dist/docsify-glossary.min.js"></script> -->
 </body>
 </html>
