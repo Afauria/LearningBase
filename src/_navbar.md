@@ -10,6 +10,7 @@
 * [数据结构和算法](/数据结构和算法/)
 * [计算机网络](/计算机网络/自底向上学习.md)
 * 关于
+  * [首页](/)
   * [我的博客](https://afauria.github.io)
   * [GitBook](/GitBook.md)
   * [Docsify](/Docsify.md)

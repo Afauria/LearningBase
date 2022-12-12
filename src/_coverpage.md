@@ -1,4 +1,4 @@
-<img src="../static/favicon.ico" alt="logo" style="zoom:150%;" />
+<img src="static/favicon.ico" alt="logo" style="zoom:150%;" />
 
 # Learning Base
 
@@ -41,3 +41,4 @@
 		<img src="https://img.shields.io/badge/📖博客地址-brightness.svg" />
 	</a>
 </div>
+

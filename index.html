@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
+  <link rel="shortcut icon" href="static/favicon.ico">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
@@ -20,7 +21,7 @@
 </head>
 <body>
   <!-- 添加水印 -->
-  <div id="watermark" style="position: fixed; width: 100%; height: 100%; background: url(../static/copyright.png);"></div>
+  <div id="watermark" style="position: fixed; width: 100%; height: 100%; background: url(static/copyright.png);"></div>
   <div id="app"></div>
 
   <script>
@@ -101,6 +102,31 @@
       // autoHeader: true, // 文章顶部没有标题时，可以自动填充_sidebar中配置的标题
       // mergeNavbar: true, // 小屏幕设备合并导航栏到侧边栏
       // externalLinkTarget: '_self', // 文章中外部链接跳转方式，默认为_blank，打开新标签页
+
+
+      // 自定义插件
+      plugins: [
+        function(hook, vm) {
+          // 每次路由切换时数据全部加载完成后调用，没有参数。
+          hook.doneEach(function() {
+            // 判断cover元素是否显示，避免重复加载
+            if(document.getElementsByClassName("cover show").length != 0) {
+              // 封面添加每日一言
+              fetch('https://v1.hitokoto.cn')
+              .then(response => response.json())
+              .then(data => {
+                hitokoto.innerHTML = data.hitokoto
+                if(data.from_who != null) {
+                  hitokotofrom.innerHTML ='——' + data.from_who + ' 《' + data.from + '》'
+                } else {
+                  hitokotofrom.innerHTML ='——《' + data.from + '》' 
+                }
+              })
+              .catch(console.error)
+            }
+          });
+        }
+      ]
     }
   </script>
   <!-- Docsify v4 -->
@@ -158,20 +184,6 @@
   <!-- <script src="//unpkg.com/docsify-glossary/dist/docsify-glossary.min.js"></script> -->
 
   <!-- 自定义 -->
-  <!-- 封面添加每日一言 -->
-  <script defer>
-    fetch('https://v1.hitokoto.cn')
-    .then(response => response.json())
-    .then(data => {
-        hitokoto.innerHTML = data.hitokoto
-        if(data.from_who != null) {
-          hitokotofrom.innerHTML ='——' + data.from_who + ' 《' + data.from + '》'
-        } else {
-          hitokotofrom.innerHTML ='——《' + data.from + '》' 
-        }
-    })
-    .catch(console.error)
-  </script>
   <!-- 统计站点访问量 -->
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </body>
