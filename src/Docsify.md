@@ -10,7 +10,9 @@ Docsify 可以快速帮你生成文档网站。不同于 GitBook、Hexo 的地�
 
 # 安装
 
-安装Node环境：[NodeJS官网](https://nodejs.org/en/download/)下载压缩包，解压，配置环境变量即可
+安装Node环境：[NodeJS官网](https://nodejs.org/en/download/)下载zip压缩包，解压，配置环境变量（Path中添加解压的文件夹路径）。
+
+CMD中执行以下命令
 
 ```shell
 # 下载Docisfy工具
@@ -23,11 +25,7 @@ docsify serve docs
 
 # 配置
 
-
-
-# 多级目录管理
-
-
+直接看`index.html`中的注释。
 
 # 自定义插件
 
@@ -111,7 +109,23 @@ window.$docsify = {
 </body>
 ```
 
-# 问题记录
+# 多级目录管理终极方案
+
+如果文章包含多级目录，结构复杂的话会出现很多坑，简单介绍如何配置：
+
+1. `index.html`中开启`relativePath: true,`
+2. 每个文件夹中都需要有`_sidebar.md`，如下图
+
+```shell
+src # 当前目录
+├── Android # 一级目录
+│   ├── _sidebar.md # 不能直接在该文件配置【Android基础/Activity.md】
+│   ├── Android基础 # 二级目录
+│   │   ├── _sidebar.md # 需要在Android基础中也添加一个【_sidebar.md】配置
+│   │   ├── Activity.md
+```
+
+# 踩坑记录
 
 ## 首个一级标题不会显示在子目录中
 
@@ -180,7 +194,7 @@ src
 
 配置使用相对路径：`relativePath: true,`，则可以改为`[Activity](Android基础/Activity.md)`。但是这个相对路径不是相对`_sidebar.md`文件，而是相对于浏览器url。
 
-也就是说当前浏览器url为`<domain>/Android/README`时，点击目录链接，相对于`/Android/`路径，因此会跳转到`<domain>/Android/Android基础/Activity`，但是再点击目录时，相对的路径是`/Android/Android基础/`，因此会跳转到`<domain>/Android/Android基础/Android基础/Activity`
+也就是说当前浏览器url为`<domain>/Android/README`时，点击目录链接，相对于`/Android/`路径，因此会跳转到`<domain>/Android/Android基础/Activity`，但是再点击目录时，相对的路径是`/Android/Android基础/`，因此会跳转到`<domain>/Android/Android基础/Android基础/Activity`，导致异常。
 
 ## 配置路由别名时key值不能为中文
 
@@ -206,7 +220,7 @@ alias: {
 
 当访问`/zh-cn/hello.md`路径时，实际上会访问`./hello.md`
 
-然而当文章引用了图片，例如`![](logo.png)`，访问`/zh-cn/logo.png`图片路径时，并不会替换为`./logo.png`，因此会找不到图片
+然而当`hello.md`文章中引用了图片，例如`![](logo.png)`，访问`/zh-cn/logo.png`图片路径时，并不会替换为`./logo.png`，因此会找不到图片
 
 ## 图片引用
 

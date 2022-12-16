@@ -1,4 +1,3 @@
-package com.cvte.tv.launcher.mosaix.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
