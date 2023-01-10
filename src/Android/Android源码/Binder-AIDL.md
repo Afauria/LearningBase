@@ -411,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
 操作：打开MainActivity，返回键退出。
 
-<img src="Binder-AIDL/bindService生命周期.png" style="zoom:50%;" />
+![](Binder-AIDL/bindService生命周期.png)
 
 需要特别注意的是：
 

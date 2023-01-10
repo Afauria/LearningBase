@@ -189,7 +189,7 @@ select、poll的缺点：需要对FD集合进行2次遍历和拷贝操作。
 
 **时间复杂度为`O(1)`，事件到达时只会拷贝关联的FD，应用收到FD集合之后，只要判断是否为空即可**
 
-<img src="IO模型/epoll流程.png" style="zoom:50%;" />
+![](IO模型/epoll流程.png)
 
 epoll方法：
 

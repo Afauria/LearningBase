@@ -265,7 +265,7 @@ OkHttpClient client = new OkHttpClient.Builder()
 
 Builder、责任链模式
 
-<img src="OkHttp/OkHttp流程.png" style="zoom:50%;" />
+![](OkHttp/OkHttp流程.png)
 
 ````shell
 interceptors # 自定义应用拦截器

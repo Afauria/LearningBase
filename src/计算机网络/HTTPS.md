@@ -34,7 +34,7 @@ SSL/TLS是四次握手
 4. 服务端使用私钥解密获得pre-master key密钥，和随机值1、2生成会话密钥
    1. 服务端同样返回加密消息，如果客户端能够接收，则表示SSL连接建立
 
-<img src="HTTPS/HTTPS连接过程.png" style="zoom:67%;" />
+![](HTTPS/HTTPS连接过程.png)
 
 HTTPS采用对称加密和非对称加密混合方式：
 

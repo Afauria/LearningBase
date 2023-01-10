@@ -169,7 +169,7 @@ String重写了hashCode方法，根据字符串计算hash值
 
 如果不重写hashCode方法，可能会找到不同拉链，此时重写equals没有意义，会插入重复元素
 
-<img src="Object类/重写hashCode方法.png" style="zoom:50%;" />
+![](Object类/重写hashCode方法.png)
 
 # 对象的clone
 

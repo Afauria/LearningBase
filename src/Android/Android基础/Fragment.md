@@ -14,7 +14,7 @@
 
 AS支持**快捷生成模版代码**，在类体中输入`newInstance`即可，如下
 
-<img src="Fragment/newInstance模版代码.png" style="zoom:50%;" />
+![](Fragment/newInstance模版代码.png)
 
 # Fragment数据传递
 

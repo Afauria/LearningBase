@@ -1,6 +1,6 @@
 # IO类型
 
-<img src="IO操作/IO类型.png" style="zoom:50%;" />
+![](IO操作/IO类型.png)
 
 # RandomAccessFile
 
