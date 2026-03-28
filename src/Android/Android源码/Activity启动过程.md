@@ -987,3 +987,4 @@ activity启动流程
 * [Android Launcher 启动 Activity 的工作过程](https://blog.csdn.net/qian520ao/article/details/78156214)
 
 http://gityuan.com/2016/03/06/start-service/
+

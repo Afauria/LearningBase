@@ -1,3 +1,5 @@
+https://blog.51cto.com/u_15361941/3916759
+
 requestLayout检查线程，调用scheduleTraversals
 
 ```java

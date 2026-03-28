@@ -1,3 +1,11 @@
+https://github.com/mitesh77/Best-Flutter-UI-Templates
+
+
+
+https://developer.android.google.cn/training/dependency-injection?hl=zh-cn
+
+设计模式-ServiceLocator模式
+
 js构造函数和普通函数区别
 在命名规则上，构造函数一般是首字母大写，普通函数则是遵照小驼峰式命名法。
 在方法调用上，
@@ -248,7 +256,6 @@ console.log(objNew2.fn === obj.fn) //true
 
 ```
 [关于js中的浅拷贝和深拷贝](http://www.360doc.com/content/18/0202/07/40810192_727093135.shtml)
-
 
 
 

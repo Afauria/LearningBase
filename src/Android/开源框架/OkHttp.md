@@ -433,7 +433,7 @@ public final class Request {
 `Header`中存储Http请求头信息：本质是key-value
 
 1. 构造过程中使用列表添加，build之后会转为数组
-2. 使用数组而不是Map存储，偶数下标存储key，奇数下标存储value
+2. 使用数组而不是Map存储，偶数下标存储key，奇数下标存储value，因此可能存在重复的Key
 
 ```java
 public final class Headers {
@@ -490,7 +490,7 @@ public final class CacheControl {
   private final int sMaxAgeSeconds;
   private final boolean isPrivate; // 只允许客户端缓存
   private final boolean isPublic; // 客户端和服务器都可以缓存
-  private final boolean mustRevalidate;
+  private final boolean mustRevalidate; // 服务端告知必须重新验证
   private final int maxStaleSeconds; // 可以接收的响应的最大过期时间，默认不接收过期响应
   private final int minFreshSeconds; // 响应保持新鲜的最小时间，小于该时间时不会重新发起网络请求
   private final boolean onlyIfCached; // 只接收缓存中的响应，如果没有缓存，会返回504状态码
@@ -627,23 +627,28 @@ public final class CacheStrategy {
         return new CacheStrategy(null, cacheResponse);
       }
 
+      // response存在的时长（年龄）
       long ageMillis = cacheResponseAge();
-      
+      // response可存活时间（保持新鲜的时间），根据服务端配置的maxAgeSeconds、expires计算
       long freshMillis = computeFreshnessLifetime();
+
       if (requestCaching.maxAgeSeconds() != -1) {
         freshMillis = Math.min(freshMillis, SECONDS.toMillis(requestCaching.maxAgeSeconds()));
       }
 
+      // 请求最小新鲜时间
       long minFreshMillis = 0;
       if (requestCaching.minFreshSeconds() != -1) {
         minFreshMillis = SECONDS.toMillis(requestCaching.minFreshSeconds());
       }
 
+      // 可以接收的响应的最大过期时间
       long maxStaleMillis = 0;
       if (!responseCaching.mustRevalidate() && requestCaching.maxStaleSeconds() != -1) {
         maxStaleMillis = SECONDS.toMillis(requestCaching.maxStaleSeconds());
       }
 
+      // response年龄+request最小新鲜度 < 剩余寿命+报废时间
       if (!responseCaching.noCache() && ageMillis + minFreshMillis < freshMillis + maxStaleMillis) {
         Response.Builder builder = cacheResponse.newBuilder();
         if (ageMillis + minFreshMillis >= freshMillis) {
@@ -685,6 +690,63 @@ public final class CacheStrategy {
   }
 ```
 
+时间计算的代码比较复杂，可以类比汽车，把用户比作客户端，4s店比作服务端
+
+```java
+//汽车当前的车龄=4s店记录的车龄（用户下单时，订单中记录下来）+交车周期+用户实际使用的时长
+private long cacheResponseAge() {
+  long apparentReceivedAge = servedDate != null
+      ? Math.max(0, receivedResponseMillis - servedDate.getTime())
+      : 0;
+  long receivedAge = ageSeconds != -1
+      ? Math.max(apparentReceivedAge, SECONDS.toMillis(ageSeconds))
+      : apparentReceivedAge;
+  long responseDuration = receivedResponseMillis - sentRequestMillis;
+  long residentDuration = nowMillis - receivedResponseMillis;
+  return receivedAge + responseDuration + residentDuration;
+}
+```
+
+```java
+  // 汽车当前的车龄
+  long ageMillis = cacheResponseAge();
+  // 4s店预计车龄：从用户收到车开始，4s店预计车龄为10年，超出则提示过期
+  long freshMillis = computeFreshnessLifetime();
+  // 用户预计车龄，不能超过4s店预计车龄
+  if (requestCaching.maxAgeSeconds() != -1) {
+    freshMillis = Math.min(freshMillis, SECONDS.toMillis(requestCaching.maxAgeSeconds()));
+  }
+
+  // 用户怀疑车到手之前已经偷偷开了一段时间，并且没有被计入。
+  long minFreshMillis = 0;
+  if (requestCaching.minFreshSeconds() != -1) {
+    minFreshMillis = SECONDS.toMillis(requestCaching.minFreshSeconds());
+  }
+
+  // 默认情况下汽车过期后，就应该去买新车。实际用户可能再开一段时间
+  long maxStaleMillis = 0;
+  if (!responseCaching.mustRevalidate() && requestCaching.maxStaleSeconds() != -1) {
+    maxStaleMillis = SECONDS.toMillis(requestCaching.maxStaleSeconds());
+  }
+
+  // 汽车当前的车龄 + 用户怀疑用过一段时间 < 汽车预计车龄 + 过期后继续使用的时间
+  if (!responseCaching.noCache() && ageMillis + minFreshMillis < freshMillis + maxStaleMillis) {
+    Response.Builder builder = cacheResponse.newBuilder();
+    if (ageMillis + minFreshMillis >= freshMillis) {
+      builder.addHeader("Warning", "110 HttpURLConnection \"Response is stale\"");
+    }
+    long oneDayMillis = 24 * 60 * 60 * 1000L;
+    if (ageMillis > oneDayMillis && isFreshnessLifetimeHeuristic()) {
+      builder.addHeader("Warning", "113 HttpURLConnection \"Heuristic expiration\"");
+    }
+    return new CacheStrategy(null, builder.build());
+  }
+```
+
+车进入4s店--receivedAge-->用户下单，生成订单，记录当前的车龄--交车时长（responseDuration）-->用户收到车-->用户开了多久的车。
+
+每次开车之前检查下是否过期，如果过期，则需要买新车。
+
 ## 缓存流程
 
 1. 根据url从`DiskLruCache`中读取缓存的响应
@@ -692,7 +754,7 @@ public final class CacheStrategy {
 3. 强制缓存，但缓存无效，返回504响应
 4. 强制缓存，且缓存有效，返回缓存的响应
 5. 协商缓存或者缓存无效情况下，进行网络请求，交给下一个责任链
-6. 协商缓存验证缓存有效，返回缓存的响应，并更新缓存
+6. 协商缓存验证缓存有效，返回缓存的响应，并更新缓存Header和时间戳
 7. 协商缓存验证无效，使用新的网络响应，并缓存该响应
 
 > 上面提到的缓存无效包括过期、被修改或者无缓存等情况
@@ -746,7 +808,7 @@ public final class CacheInterceptor implements Interceptor {
       }
     }
     if (cacheResponse != null) {
-      // 协商缓存服务器验证有效，则使用缓存的响应，并更新响应头和数据
+      // 协商缓存服务器验证有效，则使用缓存的响应，并更新响应头
       if (networkResponse.code() == HTTP_NOT_MODIFIED) {
         Response response = cacheResponse.newBuilder()
             .headers(combine(cacheResponse.headers(), networkResponse.headers()))
@@ -789,6 +851,14 @@ public final class CacheInterceptor implements Interceptor {
 }
 ```
 
+Retrofit中的Request对象是通过注解解析创建的，无法设置CacheControl对象，替代方法是配置到方法的@Headers注解中
+
+例如
+
+```java
+@Headers("Cache-Control: max-age=640000")
+```
+
 # 结语
 
 https://www.jianshu.com/p/eca3d9371248
@@ -798,3 +868,5 @@ https://www.cnblogs.com/ganchuanpu/archive/2018/02/01/8399681.html
 https://www.cnblogs.com/qlky/p/7298995.html
 
 https://www.jianshu.com/p/b32d13655be7
+
+https://cloud.tencent.com/developer/article/1383143

@@ -1,10 +1,22 @@
-# 系统架构
+# 平台架构
 
-![](Android入门/Android系统架构.jpg ':size=50%')
+<img src="Android入门/Android平台架构.jpg" style="zoom:33%;" />
 
+* System Apps：系统应用
+* Java API Framework：提供开发应用所需的API
+* Native C/C+ Libraries：原生平台库，可以通过Java API访问部分原生库的功能，也可以通过Android NDK直接访问。
+* Android Runtime：Android运行时（ART）+核心运行时库
+* Hardware Abstract Layer（HAL）：硬件抽象层，提供访问设备硬件功能的标准接口，如蓝牙、相机等。屏蔽了硬件厂商接口差异。
+* Linux内核：Android平台基于Linux内核，例如文件管理、内存管理、驱动管理、安全机制等
 
+更详细的架构图
 
-Binder使用Linux内核的动态模块加载机制
+<img src="Android入门/AOSP系统架构.png" style="zoom:20%;" />
+
+* App：分为普通应用、特权应用、设备制造商应用
+* Android API：面向应用开发者的公开API
+* 系统API：注解为@SystemAPI，普通应用无法调用
+* System Services：系统服务
 
 # SDK说明
 
@@ -106,7 +118,9 @@ DVM中解释器边运行边解释，运行速度慢。
 
 缺点：启动速度慢，每次运行都要重新编译，非热点代码还是解释执行
 
-## Android 5.0 ART+AOT
+## Android 5.0 ART（Android Runtime）+AOT
+
+使用ART虚拟机
 
 采用AOT（Ahead of Time，提前编译）技术，在应用安装的时候预编译成机器码（dex文件转为oat文件），避免每次运行进行JIT编译
 

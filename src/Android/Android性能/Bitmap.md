@@ -4,6 +4,8 @@
 2. Android 3.0 ~ 7.0：Bitmap 像素数据存储在 Java 堆中，确实解决了可靠释放的问题；也带来一个新问题：Android 应用程序对 Java 堆的限制是很严格的，创建Bitmap这种大对象容易引起 GC。
 3. Android 8.0 及以后：Bitmap 像素数据存储在 native 堆中，同时引入了 NativeAllocationRegistry 机制保证了 native 内存释放的可靠性，同时可以用的空间大大增加。
 
+https://cloud.tencent.com/developer/article/1190950
+
 # 加载大图
 
 ## BitmapFactory.Options解码选项

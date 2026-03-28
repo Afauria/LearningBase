@@ -16,7 +16,7 @@
   * [版本适配](Android基础/版本适配.md)
   * 字节码Hook
   * JNI
-  * ADB
+  * 开发调试工具
   * [桌面小部件：AppWidget](Android基础/AppWidget.md)
   * [Slice](Android基础/Slice.md)
 * 源码分析
